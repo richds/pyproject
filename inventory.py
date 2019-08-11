@@ -1,32 +1,42 @@
 
 print("Welcome to TrackYourStuff")
 
-maxLocs=2
+BOLD = '\033[1m'
+END = '\033[0m'
+
+maxLocs=0
 containers = []
 
 print("You don't currently have any stuff tracked")
+print("Please enter your container or location names ")
+print("Type done when you have added all locations.")
 i=0
-while i < maxLocs:
-    print("Please enter your container or location name")
+while 1:
     newItem=input()
+    if str(newItem) == 'done':
+        break
     containers.append([newItem])
-    i+=1
-
+    maxLocs+=1
 
 print("You now have these locations for stuff: ")
 
-for x in range(0,maxLocs):
-    if containers[x]:
-        print(str(x+1) + ". " + str(containers[x]))
-    else:
-        break
+
 print("Type exit to leave program")
 while 1:
+    for x in range(0,maxLocs):
+        if containers[x]:
+            print(str(x+1) + ". " + str(containers[x]))
+        else:
+            break
     print("Please enter the number for a location to add items to: ")
     locInput=input()
     if locInput == "exit":
         break
-    locIndex=int(locInput) -1
+    try:
+        locIndex=int(locInput) -1
+    except ValueError:
+        print("Sorry, that's not a valid option. Enter a number.\n")
+        continue
     if 1 <= int(locInput) <= maxLocs :
         print("You're adding to " + str(containers[locIndex]) + ".")
         while 1:
@@ -42,3 +52,10 @@ while 1:
 
 print("Here is your inventory: ")   
 print(containers)     
+
+for i in range(len(containers)): 
+    if len(containers[i]) < 2:
+        items = "Nothing"
+    else:
+        items=str(containers[i][1])
+    print(BOLD + containers[i][0] +END +" has " + items)
