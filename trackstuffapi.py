@@ -1,5 +1,5 @@
-import json
-from flask import Flask
+import simplejson as json
+from flask import Flask, request, jsonify
 from flask_restful import Api, reqparse, Resource
 
 app = Flask(__name__)
@@ -12,7 +12,6 @@ def importDatabase():
     if data == None:
         return "You don't currently have any stuff tracked"
     else:
-        print("This is your data: " + str(data))
         return data
 
 @app.route('/')
@@ -28,5 +27,25 @@ def allstuff():
     yourStuff = str(importDatabase())
     return yourStuff
 
+@app.route('/locations', methods=['GET','POST'])
+def get_all_locations():
+    locStuff = importDatabase()
+    if request.method == 'GET':
+        outputLocations = []
 
+        for i in range(0,len(locStuff)):
+            outputLocations.append(locStuff[i])
+        
+        output = str(outputLocations)
+        print(str(output))
+        return output
 
+    if request.method == 'POST':
+        addLocation = []
+        stringLoc=(request.get_data().decode('utf8'))
+        addLocation.append(stringLoc)
+        locStuff.append(addLocation)
+        message = "Successfully added location "
+        with open('data.txt', 'w') as outfile:
+            json.dump(locStuff, outfile)
+        return (message + stringLoc),201
