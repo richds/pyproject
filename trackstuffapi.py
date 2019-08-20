@@ -7,12 +7,17 @@ containers = []
 
 def importDatabase():
     global containers
-    with open("data.txt") as file:
-        data = json.load(file)
-    if data == None:
-        return "You don't currently have any stuff tracked"
-    else:
-        return data
+    try:
+        with open("apidata.txt") as file:
+            if file.read(1):
+                data = json.load(file)
+            else:
+                data = None
+    except FileNotFoundError:
+        open('apidata.txt', 'a').close()
+        data = None
+
+    return data
 
 @app.route('/')
 def index():
@@ -30,6 +35,8 @@ def allstuff():
 @app.route('/locations', methods=['GET','POST'])
 def get_all_locations():
     locStuff = importDatabase()
+    if locStuff == None:
+        return "You don't have any locations.", 404
     if request.method == 'GET':
         outputLocations = []
 
@@ -49,3 +56,7 @@ def get_all_locations():
         with open('data.txt', 'w') as outfile:
             json.dump(locStuff, outfile)
         return (message + stringLoc),201
+
+@app.route('/locations/<loc>', methods=['GET', 'POST', 'DELETE', 'PUT'])
+def specific_locations():
+    locStuff = importDatabase()
