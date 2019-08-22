@@ -64,10 +64,6 @@ def get_all_locations():
         return (locStr),200
 
     if request.method == 'POST':
-        addLocation = {
-            "grey": "foot",
-            "melville": "whale"
-        }
         currData=importDatabase()
         
         addData=request.get_json()
@@ -78,6 +74,22 @@ def get_all_locations():
         #return (message + stringLoc),201
         return (message),201
 
-@app.route('/locations/<loc>', methods=['GET', 'POST', 'DELETE', 'PUT'])
-def specific_locations():
-    locStuff = importDatabase()
+@app.route('/locations/<location>', methods=['GET', 'DELETE', 'PUT'])
+def alter_a_location(location):
+    if request.method == 'GET':
+        localDict = importDatabase()
+        if localDict.get(location):
+            data = localDict.get(location)
+            return jsonify(data)
+        else: 
+            return "Not found", 404
+
+    if request.method == 'DELETE':
+        localDict = importDatabase()
+        if localDict.get(location):
+            return ("Removed "+ str(location) + " with items: " + str(localDict.pop(location))), 200
+            with open('apidata.txt', 'w') as outfile:
+                json.dump(localDict, outfile)
+        else: 
+            return "Not found", 404
+
