@@ -71,7 +71,7 @@ def get_all_locations():
         newDictionary= {}
         for key in addData.keys(): #iterate over all the keys in current data
             if currData.get(key): #find out if the key exists in our current data
-                newValues = currData.pop(key) #pop out the key's data if it exists and assign values to newValues
+                newValues = currData[key] #pop out the key's data if it exists and assign values to newValues
                 if type(newValues) is not list: #check if data is a list, otherwise make it one
                     newValues = [newValues]
                 #if type(addData) is not list:
@@ -79,9 +79,14 @@ def get_all_locations():
                 #else:
                 ##    for element in addData[key]:
                 #       newValues.append(element)
-                newValues = newValues + addData[key]
+                
+                newList = [element for element in currData[key] if element not in addData[key]]
+                newValues = newList + addData[key]
                 currData[key] = newValues
                 newDictionary[key] = newValues 
+            else:
+                currData[key] = addData[key]
+                newDictionary[key] = addData[key]
         message = "Added data: " + str(newDictionary)
         with open('apidata.txt', 'w') as outfile:
             json.dump(currData, outfile)
