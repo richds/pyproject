@@ -65,18 +65,16 @@ def get_all_locations():
 
     if request.method == 'POST':
         addLocation = {
-            "theme": "bluespring",
-            "size": "small",
-            "splashscreen": "false"
+            "grey": "foot",
+            "melville": "whale"
         }
-        #if locStuff == None:
-         #   locStuff = {}
-        #stringLoc=(request.get_data().decode('utf8'))
-        #addLocation.update(stringLoc)
-        #locStuff.append(addLocation)
+        currData=importDatabase()
+        
+        addData=request.get_json()
+        currData.update(addData)
         message = "Successfully added location "
         with open('apidata.txt', 'w') as outfile:
-            json.dump(addLocation, outfile)
+            json.dump(currData, outfile)
         #return (message + stringLoc),201
         return (message),201
 
