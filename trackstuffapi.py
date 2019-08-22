@@ -1,5 +1,6 @@
 import json
 import os
+import types
 from flask import Flask, request, jsonify
 from flask_restful import Api, reqparse, Resource
 
@@ -33,7 +34,7 @@ def allstuff():
     yourStuff = str(importDatabase())
     return yourStuff
 
-@app.route('/locations', methods=['GET','POST'])
+@app.route('/locations', methods=['GET','POST','PUT','DELETE'])
 def get_all_locations():
   #  locStuff= {
    #     "desk":"paper",
@@ -64,17 +65,60 @@ def get_all_locations():
         return (locStr),200
 
     if request.method == 'POST':
-        currData=importDatabase()
+        currData=importDatabase() #import current data from db
         
-        addData=request.get_json()
-        currData.update(addData)
-        message = "Successfully added location "
+        addData=request.get_json() #read in the POST data json, assign to addData
+        newDictionary= {}
+        for key in addData.keys(): #iterate over all the keys in current data
+            if currData.get(key): #find out if the key exists in our current data
+                newValues = currData.pop(key) #pop out the key's data if it exists and assign values to newValues
+                if type(newValues) is not list: #check if data is a list, otherwise make it one
+                    newValues = [newValues]
+                #if type(addData) is not list:
+                #    newValues.append(addData[key]) #add the new value to the current data
+                #else:
+                ##    for element in addData[key]:
+                #       newValues.append(element)
+                newValues = newValues + addData[key]
+                currData[key] = newValues
+                newDictionary[key] = newValues 
+        message = "Added data: " + str(newDictionary)
         with open('apidata.txt', 'w') as outfile:
             json.dump(currData, outfile)
         #return (message + stringLoc),201
         return (message),201
 
-@app.route('/locations/<location>', methods=['GET', 'DELETE', 'PUT'])
+    if request.method == 'PUT':
+        currData=importDatabase()
+        
+        replaceData=request.get_json()
+
+        currData.update(replaceData) # adds in new keys and overwrites existing key values with new data
+        message = "Successfully changed current data. "
+        with open('apidata.txt', 'w') as outfile:
+            json.dump(currData, outfile)
+        return (message),200
+
+    if request.method == 'DELETE':
+        currData=importDatabase() #import current data from db
+        messageDict = {}
+        removeData=request.get_json() #read in the DEL data json, assign to addData
+        for key in removeData.keys(): 
+            if not currData.get(key):
+                return str(key) + "Not found", 404
+            else:
+                new_list = [element for element in currData[key] if element not in removeData[key]]
+                currData[key] = new_list
+                messageDict[key] = currData[key]
+        message = "Location(s) updated to contain these items: " + str(messageDict)
+        with open('apidata.txt', 'w') as outfile:
+            json.dump(currData, outfile)
+        return message, 200
+
+
+
+
+@app.route('/locations/<location>', methods=['GET', 'DELETE'])
 def alter_a_location(location):
     if request.method == 'GET':
         localDict = importDatabase()
@@ -87,9 +131,30 @@ def alter_a_location(location):
     if request.method == 'DELETE':
         localDict = importDatabase()
         if localDict.get(location):
-            return ("Removed "+ str(location) + " with items: " + str(localDict.pop(location))), 200
+            toRemove = localDict.pop(location)
             with open('apidata.txt', 'w') as outfile:
                 json.dump(localDict, outfile)
+            return ("Removed "+ str(location) + " with items: " + str(toRemove)), 200
         else: 
             return "Not found", 404
+
+#not implemented
+    if request.method == 'PUT':
+        addData=request.get_json()
+        locationKey = get(addData)
+        localDict = importDatabase()
+        if localDict.get(location):
+            origValues = localDict.get(location)
+            if type(origValues) is not list:
+                origValues = [origValues]
+            
+            print(str(addData))
+            newValues = origValues.append(addData)
+            localDict[location] = newValues
+            with open('apidata.txt', 'w') as outfile:
+                json.dump(localDict, outfile)
+            return "OK", 201
+        else:
+            return "Not Found", 404
+
 
