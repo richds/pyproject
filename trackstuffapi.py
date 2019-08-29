@@ -59,17 +59,19 @@ def get_all_locations():
         #    locDict=json.load(file)
         locDict=importDatabase()
         if locDict == None:
-            return "You don't have any locations.", 404
+            return "You don't have any locations.", 200
         locStr = jsonify(locDict)
         print("This is locStr: "+ str(locStr))
         return (locStr),200
 
     if request.method == 'POST':
         currData=importDatabase() #import current data from db
-        
+        if not currData:
+                currData = {} #initialize currdata to avoid NPE later
         addData=request.get_json() #read in the POST data json, assign to addData
         newDictionary= {}
         for key in addData.keys(): #iterate over all the keys in current data
+            
             if currData.get(key): #find out if the key exists in our current data
                 newValues = currData[key] #pop out the key's data if it exists and assign values to newValues
                 if type(newValues) is not list: #check if data is a list, otherwise make it one
@@ -77,17 +79,17 @@ def get_all_locations():
                 #if type(addData) is not list:
                 #    newValues.append(addData[key]) #add the new value to the current data
                 #else:
-                ##    for element in addData[key]:
-                #       newValues.append(element)
+                for element in addData[key]:
+                    newValues.append(element)
                 
                 newList = [element for element in currData[key] if element not in addData[key]]
                 newValues = newList + addData[key]
                 currData[key] = newValues
                 newDictionary[key] = newValues 
-            else:
+            else:               
                 currData[key] = addData[key]
                 newDictionary[key] = addData[key]
-        message = "Added data: " + str(newDictionary)
+        message = "Updated data: " + str(newDictionary)
         with open('apidata.txt', 'w') as outfile:
             json.dump(currData, outfile)
         #return (message + stringLoc),201
