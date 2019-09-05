@@ -4,7 +4,7 @@ import types
 from flask import Flask, request, jsonify
 from flask_restful import Api, reqparse, Resource
 
-app = Flask(__name__)
+application = Flask(__name__)
 
 def importDatabase():
     #data = {}
@@ -21,20 +21,20 @@ def importDatabase():
 
     return data
 
-@app.route('/')
+@application.route('/')
 def index():
     return 'Server Works!'
 
-@app.route('/greet')
+@application.route('/greet')
 def say_hello():
     return 'Hello from Server'
 
-@app.route('/stuff')
+@application.route('/stuff')
 def allstuff():
     yourStuff = str(importDatabase())
     return yourStuff
 
-@app.route('/locations', methods=['GET','POST','PUT','DELETE'])
+@application.route('/locations', methods=['GET','POST','PUT','DELETE'])
 def get_all_locations():
   #  locStuff= {
    #     "desk":"paper",
@@ -125,7 +125,7 @@ def get_all_locations():
 
 
 
-@app.route('/locations/<location>', methods=['GET', 'DELETE'])
+@application.route('/locations/<location>', methods=['GET', 'DELETE'])
 def alter_a_location(location):
     if request.method == 'GET':
         localDict = importDatabase()
@@ -169,5 +169,5 @@ def alter_a_location(location):
 if __name__ == "__main__":
     # Setting debug to True enables debug output. This line should be
     # removed before deploying a production app.
-    app.debug = True
-    app.run()
+    application.debug = True
+    application.run()
