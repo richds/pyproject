@@ -3,7 +3,7 @@ import requests
 import json
 
 
-url = 'http://127.0.0.1:5000' # The root url of the flask app
+url = 'http://localhost:80' # The root url of the flask app
 locations= url+"/locations"
 
 mimetype = 'application/json'
