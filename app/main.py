@@ -4,7 +4,7 @@ import types
 from flask import Flask, request, jsonify
 from flask_restful import Api, reqparse, Resource
 
-application = Flask(__name__)
+app = Flask(__name__)
 
 def importDatabase():
     #data = {}
@@ -21,20 +21,20 @@ def importDatabase():
 
     return data
 
-@application.route('/')
+@app.route('/')
 def index():
     return 'Server Works!'
 
-@application.route('/greet')
+@app.route('/greet')
 def say_hello():
     return 'Hello from Server'
 
-@application.route('/stuff')
+@app.route('/stuff')
 def allstuff():
     yourStuff = str(importDatabase())
     return yourStuff
 
-@application.route('/locations', methods=['GET','POST','PUT','DELETE'])
+@app.route('/locations', methods=['GET','POST','PUT','DELETE'])
 def get_all_locations():
   #  locStuff= {
    #     "desk":"paper",
@@ -125,7 +125,7 @@ def get_all_locations():
 
 
 
-@application.route('/locations/<location>', methods=['GET', 'DELETE'])
+@app.route('/locations/<location>', methods=['GET', 'DELETE'])
 def alter_a_location(location):
     if request.method == 'GET':
         localDict = importDatabase()
@@ -148,7 +148,7 @@ def alter_a_location(location):
 #not implemented
     if request.method == 'PUT':
         addData=request.get_json()
-        #locationKey = get(addData)
+        locationKey = get(addData)
         localDict = importDatabase()
         if localDict.get(location):
             origValues = localDict.get(location)
@@ -169,5 +169,5 @@ def alter_a_location(location):
 if __name__ == "__main__":
     # Setting debug to True enables debug output. This line should be
     # removed before deploying a production app.
-    application.debug = False
-    application.run()
+    app.debug = False
+    app.run()
