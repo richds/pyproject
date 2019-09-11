@@ -3,7 +3,8 @@ import requests
 import json
 
 
-url = 'http://host.docker.internal:80' # The root url of the flask app
+# for mac: url = 'http://host.docker.internal:80' # The root url of the flask app
+url = 'http://172.17.0.1:80' # for linux
 locations= url+"/locations"
 
 mimetype = 'application/json'
