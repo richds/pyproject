@@ -1,4 +1,4 @@
-FROM 722277795083.dkr.ecr.us-west-1.amazonaws.com/python-app
+FROM 722277795083.dkr.ecr.us-west-1.amazonaws.com/python-app:base-image
 RUN apk --update add bash nano docker curl
 COPY ./requirements.txt /app/requirements.txt
 COPY ./app/ /app
