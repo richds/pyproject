@@ -65,7 +65,7 @@ def test_get_index():
 def test_hello_page():
     r = requests.get(url+'/greet')
     assert r.status_code == 200 
-    assert "Hello from Server" in r.text
+    assert "Hello from Servertoast" in r.text
 
 def test_get_locations():
     r= requests.get(url+'/locations')
