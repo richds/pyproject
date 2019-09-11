@@ -3,7 +3,7 @@ import requests
 import json
 
 
-url = 'http://127.0.0.1:80' # The root url of the flask app
+url = 'http://127.0.0.1:1337' # The root url of the flask app
 locations= url+"/locations"
 
 mimetype = 'application/json'
@@ -59,7 +59,7 @@ def verify_does_not_contain(checkstring=[]):
 
 def test_get_index():
     r = requests.get(url+'/')
-    print(r.text)
+    print("base url is: " + r.url)
     assert r.status_code == 200
 
 def test_hello_page():
