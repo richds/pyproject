@@ -1,0 +1,33 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+        python: 3.7
+    commands:
+        - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:1337 --storage-driver=overlay&
+        - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
+  pre_build:
+    commands:
+        - echo creating directory for tests
+        - mkdir /app
+        - echo copying new code to /app
+        - cp $CODEBUILD_SRC_DIR/app/* /app/
+        - echo Logging in to Amazon ECR...
+        - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+  build:
+    commands:
+        - echo Build started on `date`
+        - echo Building the Docker image...          
+        - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+        - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG 
+        - docker run -d -p 1234:80 --name myNewContainer $IMAGE_REPO_NAME:$IMAGE_TAG
+        - pip install pytest requests
+        - curl http://172.18.0.1:1234/greet
+        - echo Starting tests
+        - pytest -x -s /app/test_api.py
+  post_build:
+    commands:
+        - echo Build completed on `date`
+        - echo Pushing the Docker image...
+        - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
