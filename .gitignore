@@ -6,6 +6,7 @@ test-reports
 .DS_Store
 virt/
 venv/
+base-env/
 nohup*
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

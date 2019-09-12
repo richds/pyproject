@@ -1,11 +1,23 @@
 import pytest
 import requests
 import json
+import sys
 
 
-# for mac: url = 'http://host.docker.internal:80' # The root url of the flask app
-url = 'http://172.18.0.1:1234' # for linux
+# mac within docker url = 'http://host.docker.internal:1337' # The root url of the flask app
+# url = 'http://172.18.0.1:1234' # for linux
+platform = sys.platform
+print ("this is the platform: "+ platform)
+
+if "darwin" in platform:
+    url = 'http://127.0.0.1:1337'
+else:
+    url = 'http://172.18.0.1:1234'
+
 locations= url+"/locations"
+
+
+
 
 mimetype = 'application/json'
 headers = {
@@ -28,6 +40,12 @@ def post_new_data(newstuff):
 def put_data(newdata):
     r = requests.put(url = url+'/locations',json=newdata)
     assert r.status_code == 200
+
+def delete_a_location(del_location):
+    r = requests.delete(url = url+'/locations/'+del_location)
+    assert r.status_code == 200
+    assert ("Removed "+del_location) in r.text
+
 
 def verify_get_data(checkstring=[]): #input can be a string or list of strings
     all_inventory = get_all_data()
@@ -66,7 +84,7 @@ def test_get_index():
 def test_hello_page():
     r = requests.get(url+'/greet')
     assert r.status_code == 200 
-    assert "Hello from Servertoast" in r.text
+    assert "Hello from Server" in r.text
 
 def test_get_locations():
     r= requests.get(url+'/locations')
@@ -142,6 +160,13 @@ def test_delete_location():
 
 def test_final_state():
     verify_get_data(['map', 'calculator', 'wallet'])
+
+def test_cleanup():
+    delete_a_location("backpack")
+    delete_a_location("counter")
+    message=get_all_data()
+    assert "You don't have any locations." in message.text
+
 
 
 

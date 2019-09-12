@@ -7,7 +7,6 @@ from flask_restful import Api, reqparse, Resource
 app = Flask(__name__)
 
 def importDatabase():
-    #data = {}
     try:
         with open("apidata.txt", "r") as file:
             #data = json.load(file)
@@ -36,29 +35,10 @@ def allstuff():
 
 @app.route('/locations', methods=['GET','POST','PUT','DELETE'])
 def get_all_locations():
-  #  locStuff= {
-   #     "desk":"paper",
-    #    "chair":"pad",
-     #   "splashscreen":"false"
-    #} 
-    #locStuff= importDatabase()
-   # locStr= json.dumps(locStuff)
-   # print("This is locStr: " +locStr)
-    #locStuff= importDatabase()
-    #with open('apidata.txt', 'w') as outfile:
-     #       json.dump(locStuff, outfile)
-    
-    if request.method == 'GET':
-        #outputLocations = {}
 
-        #for i in range(0,len(locStuff)):
-         #   outputLocations.append(locStuff[i])
-        
-        #output = str(outputLocations)
-        #with open('apidata.txt', 'r') as file:
-        #    locDict=json.load(file)
+    if request.method == 'GET':
         locDict=importDatabase()
-        if locDict == None:
+        if ((locDict == None) or (not any(locDict))):
             return "You don't have any locations.", 200
         locStr = jsonify(locDict)
         print("This is locStr: "+ str(locStr))
@@ -76,9 +56,7 @@ def get_all_locations():
                 newValues = currData[key] #pop out the key's data if it exists and assign values to newValues
                 if type(newValues) is not list: #check if data is a list, otherwise make it one
                     newValues = [newValues]
-                #if type(addData) is not list:
-                #    newValues.append(addData[key]) #add the new value to the current data
-                #else:
+        
                 for element in addData[key]:
                     newValues.append(element)
                 
@@ -92,7 +70,7 @@ def get_all_locations():
         message = "Updated data: " + str(newDictionary)
         with open('apidata.txt', 'w') as outfile:
             json.dump(currData, outfile)
-        #return (message + stringLoc),201
+    
         return (message),201
 
     if request.method == 'PUT':
