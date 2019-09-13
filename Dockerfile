@@ -4,6 +4,6 @@ FROM 722277795083.dkr.ecr.us-west-1.amazonaws.com/python-app:latest
 COPY ./requirements.txt /app/requirements.txt
 COPY ./app/ /app
 WORKDIR /app
-EXPOSE 1234
+EXPOSE 80
 RUN pip install --upgrade pip
 RUN pip install -r /app/requirements.txt
