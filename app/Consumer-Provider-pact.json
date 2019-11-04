@@ -1,0 +1,59 @@
+{
+  "consumer": {
+    "name": "Consumer"
+  },
+  "provider": {
+    "name": "Provider"
+  },
+  "interactions": [
+    {
+      "providerStates": [
+        {
+          "name": "some data exists",
+          "params": {}
+        }
+      ],
+      "description": "a request",
+      "request": {
+        "method": "get",
+        "path": "/",
+        "query": {
+          "foo": [
+            "bar"
+          ]
+        }
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "providerStates": [
+        {
+          "name": "The Server is online",
+          "params": {}
+        }
+      ],
+      "description": "a request",
+      "request": {
+        "method": "get",
+        "path": "/",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "Server Works!",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  }
+}

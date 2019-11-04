@@ -4,8 +4,6 @@ import json
 import sys
 
 
-# mac within docker url = 'http://host.docker.internal:1337' # The root url of the flask app
-# url = 'http://172.18.0.1:1234' # for linux
 platform = sys.platform
 print ("this is the platform: "+ platform)
 
